@@ -24,6 +24,8 @@
 </script>
 
 <script type="module">
+    ////////// THREE.JS
+
     import * as THREE from 'three';
 
     // Logique de clic sur les maisons
@@ -57,9 +59,11 @@
         return object.isMesh;
     }
 
-    function showModal(house) {
+    async function showModal(house) {
         // Insérez ici la logique pour afficher la modale
         document.getElementById("modal").style = "display: block;"
+        const price = await getMaisonPrice(house.uuid);
+        console.log(price);
     }
 
     // Fin de la logique de clic
@@ -97,10 +101,11 @@
     };
 
     animate();
-</script>
-<script type="module">
+
+    //////////////////////// WEB3
+
     const Web3 = require('web3');
-    import TruffleContract from '@truffle/contract';
+    const TruffleContract = require('@truffle/contract');
 
     // Initialiser web3
     let web3;
@@ -112,39 +117,56 @@
     }
 
     // Récupérer le JSON du contrat compilé avec Truffle
-    const MaisonContractJson = require('./contracts/MaisonContract.json');
+    const maisonContractJson = require('./contracts/MaisonContract.json');
 
     // Initialiser le contrat Truffle
-    const MaisonContract = TruffleContract(MaisonContractJson);
-    MaisonContract.setProvider(web3.currentProvider);
+    const maisonContract = TruffleContract(maisonContractJson);
+    maisonContract.setProvider(web3.currentProvider);
+
+    async function getMaisonPrice(id) {
+        // Connectez-vous à Metamask
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+        // Récupérez toutes les maisons
+        const maisons = await maisonContract.methods.getAllMaisons().call({ from: accounts[0] });
+
+        // Trouvez la maison avec l'ID correspondant et renvoyez son prix
+        for (let maison of maisons) {
+            if (maison.id === id) {
+                return maison.cost;
+            }
+        }
+
+        throw new Error('Maison not found');
+    }
 
     // Définition des fonctions pour interagir avec le contrat
     async function mintMaison(tokenId) {
         const accounts = await web3.eth.getAccounts();
-        const instance = await MaisonContract.deployed();
+        const instance = await maisonContract.deployed();
         await instance.mint(accounts[0], tokenId, { value: web3.utils.toWei('1', 'ether'), from: accounts[0] });
     }
 
     async function getMaisonOwner(tokenId) {
-        const instance = await MaisonContract.deployed();
+        const instance = await maisonContract.deployed();
         const owner = await instance.ownerOf(tokenId);
         return owner;
     }
 
     async function getMaison(tokenId) {
-        const instance = await MaisonContract.deployed();
+        const instance = await maisonContract.deployed();
         const maison = await instance.maisons(tokenId);
         return maison;
     }
 
     async function getAllMaisons() {
-        const instance = await MaisonContract.deployed();
+        const instance = await maisonContract.deployed();
         const maisons = await instance.getAllMaisons();
         return maisons;
     }
 
     // Mettre à jour le metaverse lorsque de nouvelles maisons sont minted
-    MaisonContract.deployed().then(function(instance) {
+    maisonContract.deployed().then(function(instance) {
         instance.Transfer({}, function(error, event) {
             if (error) console.error('Error on Transfer event:', error);
             else {
