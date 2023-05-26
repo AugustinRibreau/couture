@@ -5,8 +5,21 @@
   "license": "MIT",
   "dependencies": {
     "@truffle/contract": "^4.6.22",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22",
     "solc": "^0.8.20",
     "three": "^0.152.2",
     "web3": "^1.10.0"
+  },
+  "scripts": {
+    "serve": "nodemon"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "*"
+    ],
+    "exec": "node app.js"
   }
 }

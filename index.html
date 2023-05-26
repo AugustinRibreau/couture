@@ -23,10 +23,12 @@
 	}
 </script>
 
+
 <script type="module">
     ////////// THREE.JS
 
     import * as THREE from 'three';
+    import { GLTFLoader } from 'https://unpkg.com/three@0.152.2/examples/jsm/loaders/GLTFLoader.js'
 
     // Logique de clic sur les maisons
     const raycaster = new THREE.Raycaster();
@@ -68,6 +70,8 @@
 
     // Fin de la logique de clic
 
+
+
     // Créez une scène, une caméra et un renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -79,20 +83,25 @@
     // Créez un matériau de base pour les maisons
     const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
 
-    // Créez 4 maisons et ajoutez-les à la scène
-    for(let i = 0; i < 4; i++) {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const house = new THREE.Mesh(geometry, material);
+    const loader = new GLTFLoader();
 
-        // Placez chaque maison à une position différente le long de l'axe des x
-        house.position.x = i * 2;
-        scene.add(house);
-    }
+    loader.load('models/house.gltf', (gltf) => {
+        // Créez 4 maisons et ajoutez-les à la scène
+        // for(let i = 0; i < 4; i++) {
+            // const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const house = gltf.scene;
+
+            // Placez chaque maison à une position différente le long de l'axe des x
+            // house.position.x = i * 2;
+            // console.log(house)
+            scene.add(house);
+        // }
+    });
 
     // Positionnez la caméra de sorte qu'elle regarde les maisons
-    camera.position.z = 5;
+    camera.position.z = 250;
     camera.position.y = 1;
-    camera.position.x = 3;
+    camera.position.x = 0;
 
     // Fonction de rendu
     const animate = function () {
@@ -115,6 +124,18 @@
     } else {
         web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545")); // Fallback for local Ganache test network
     }
+
+    async function connectMetamask() {
+        try {
+            // Demandez à Metamask l'autorisation de se connecter
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            console.log('Connected with account:', accounts[0]);
+        } catch (error) {
+            console.error('User rejected connection:', error);
+        }
+    }
+
+    connectMetamask();
 
     // Récupérer le JSON du contrat compilé avec Truffle
     const maisonContractJson = require('./contracts/MaisonContract.json');
@@ -178,6 +199,7 @@
         });
     });
 </script>
+
 
 <style>
     body {
