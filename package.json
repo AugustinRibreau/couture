@@ -1,0 +1,12 @@
+{
+  "name": "threejs",
+  "version": "1.0.0",
+  "main": "index.sol",
+  "license": "MIT",
+  "dependencies": {
+    "@truffle/contract": "^4.6.22",
+    "solc": "^0.8.20",
+    "three": "^0.152.2",
+    "web3": "^1.10.0"
+  }
+}
