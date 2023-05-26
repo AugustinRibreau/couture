@@ -11,7 +11,7 @@ if (typeof window.ethereum !== 'undefined') {
 }
 
 // Récupérer le JSON du contrat compilé avec Truffle
-const MaisonContractJson = require('./build/contracts/MaisonContract.json');
+const MaisonContractJson = require('./contracts/MaisonContract.json');
 
 // Initialiser le contrat Truffle
 const MaisonContract = TruffleContract(MaisonContractJson);
@@ -49,7 +49,8 @@ MaisonContract.deployed().then(function(instance) {
         else {
             // Mettre à jour le Metaverse
             // Vous aurez besoin de remplacer cette fonction par quelque chose qui met à jour réellement votre scène 3D
-            updateMetaverse(event);
+            // updateMetaverse(event);
+            console.log("Updating metaverse");
         }
     });
 });

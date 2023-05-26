@@ -1,7 +1,14 @@
 
 <!DOCTYPE html>
 <html>
-    <body></body>
+    <body>
+    <div id="modal" style="display:none;">
+        <h2>Maison à vendre</h2>
+        <p>Prix : <span id="price"></span></p>
+        <button id="buy-button">Acheter avec Metamask</button>
+    </div>
+
+    </body>
 </html>
 
 <!-- Import maps polyfill -->
@@ -16,9 +23,100 @@
 	}
 </script>
 
-<script type="module" src="threejs.js">
-<script type="module" src="web3">
+<script type="module">
+    import * as THREE from 'three';
 
+    // Créez une scène, une caméra et un renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Créez un matériau de base pour les maisons
+    const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+
+    // Créez 4 maisons et ajoutez-les à la scène
+    for(let i = 0; i < 4; i++) {
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const house = new THREE.Mesh(geometry, material);
+
+        // Placez chaque maison à une position différente le long de l'axe des x
+        house.position.x = i * 2;
+        scene.add(house);
+    }
+
+    // Positionnez la caméra de sorte qu'elle regarde les maisons
+    camera.position.z = 5;
+    camera.position.y = 1;
+    camera.position.x = 3;
+
+    // Fonction de rendu
+    const animate = function () {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    };
+
+    animate();
+</script>
+<script type="module">
+    const Web3 = require('web3');
+    const TruffleContract = require('@truffle/contract');
+
+    // Initialiser web3
+    let web3;
+    if (typeof window.ethereum !== 'undefined') {
+        web3 = new Web3(window.ethereum);
+        window.ethereum.enable();
+    } else {
+        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545")); // Fallback for local Ganache test network
+    }
+
+    // Récupérer le JSON du contrat compilé avec Truffle
+    const MaisonContractJson = require('./contracts/MaisonContract.json');
+
+    // Initialiser le contrat Truffle
+    const MaisonContract = TruffleContract(MaisonContractJson);
+    MaisonContract.setProvider(web3.currentProvider);
+
+    // Définition des fonctions pour interagir avec le contrat
+    async function mintMaison(tokenId) {
+        const accounts = await web3.eth.getAccounts();
+        const instance = await MaisonContract.deployed();
+        await instance.mint(accounts[0], tokenId, { value: web3.utils.toWei('1', 'ether'), from: accounts[0] });
+    }
+
+    async function getMaisonOwner(tokenId) {
+        const instance = await MaisonContract.deployed();
+        const owner = await instance.ownerOf(tokenId);
+        return owner;
+    }
+
+    async function getMaison(tokenId) {
+        const instance = await MaisonContract.deployed();
+        const maison = await instance.maisons(tokenId);
+        return maison;
+    }
+
+    async function getAllMaisons() {
+        const instance = await MaisonContract.deployed();
+        const maisons = await instance.getAllMaisons();
+        return maisons;
+    }
+
+    // Mettre à jour le metaverse lorsque de nouvelles maisons sont minted
+    MaisonContract.deployed().then(function(instance) {
+        instance.Transfer({}, function(error, event) {
+            if (error) console.error('Error on Transfer event:', error);
+            else {
+                // Mettre à jour le Metaverse
+                // Vous aurez besoin de remplacer cette fonction par quelque chose qui met à jour réellement votre scène 3D
+                // updateMetaverse(event);
+                console.log("Updating metaverse");
+            }
+        });
+    });
 </script>
 
 <style>
