@@ -26,6 +26,44 @@
 <script type="module">
     import * as THREE from 'three';
 
+    // Logique de clic sur les maisons
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    window.addEventListener('click', onClick, false);
+
+    function onClick(event) {
+        // Convertissez les coordonnées de la souris en coordonnées normalisées (-1 à +1) pour le Raycaster
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        // Mettez à jour le rayon avec la caméra et les coordonnées de la souris
+        raycaster.setFromCamera(mouse, camera);
+
+        // Calculez les objets qui intersectent le rayon
+        const intersects = raycaster.intersectObjects(scene.children);
+
+        for (let i = 0; i < intersects.length; i++) {
+            // `intersects[i].object` est l'objet qui intersecte le rayon
+            // Vous pouvez ajouter un contrôle pour vérifier que l'objet est bien une maison, puis appeler une fonction pour afficher la modale
+
+            if (isHouse(intersects[i].object)) {
+                showModal(intersects[i].object);
+            }
+        }
+    }
+
+    function isHouse(object) {
+        // Nous n'aurons que les maisons donc il n'y aura que ces Meshes-là
+        return object.isMesh;
+    }
+
+    function showModal(house) {
+        // Insérez ici la logique pour afficher la modale
+        document.getElementById("modal").style = "display: block;"
+    }
+
+    // Fin de la logique de clic
+
     // Créez une scène, une caméra et un renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -62,7 +100,7 @@
 </script>
 <script type="module">
     const Web3 = require('web3');
-    const TruffleContract = require('@truffle/contract');
+    import TruffleContract from '@truffle/contract';
 
     // Initialiser web3
     let web3;
