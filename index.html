@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html>
-    <body>
-    <div id="modal" style="display:none;">
-        <h2>Maison à vendre</h2>
-        <p>Prix : <span id="price"></span></p>
-        <button id="buy-button">Acheter avec Metamask</button>
-    </div>
+<body>
+<div id="modal" style="display:none;">
+    <p class="title">Maison à vendre</p>
+    <p class="text">Prix : <span id="price"></span></p>
+    <button type="button" id="buy-button">Acheter avec Metamask</button>
+</div>
 
-    </body>
+</body>
 </html>
 
 <!-- Import maps polyfill -->
@@ -21,6 +20,7 @@
 			"three": "https://unpkg.com/three/build/three.module.js"
 		}
 	}
+
 </script>
 
 
@@ -28,7 +28,7 @@
     ////////// THREE.JS
 
     import * as THREE from 'three';
-    import { GLTFLoader } from 'https://unpkg.com/three@0.152.2/examples/jsm/loaders/GLTFLoader.js'
+    import {GLTFLoader} from 'https://unpkg.com/three@0.152.2/examples/jsm/loaders/GLTFLoader.js'
 
     // Logique de clic sur les maisons
     const raycaster = new THREE.Raycaster();
@@ -63,13 +63,12 @@
 
     async function showModal(house) {
         // Insérez ici la logique pour afficher la modale
-        document.getElementById("modal").style = "display: block;"
-        const price = await getMaisonPrice(house.uuid);
-        console.log(price);
+        document.getElementById("modal").style = document.getElementById("modal").style.display === "none" ? "display: block;" : "display: none;"
+        // const price = await getMaisonPrice(house.uuid);
+        // console.log(price);
     }
 
     // Fin de la logique de clic
-
 
 
     // Créez une scène, une caméra et un renderer
@@ -88,19 +87,19 @@
     loader.load('models/house.gltf', (gltf) => {
         // Créez 4 maisons et ajoutez-les à la scène
         // for(let i = 0; i < 4; i++) {
-            // const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const house = gltf.scene;
+        // const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const house = gltf.scene;
 
-            // Placez chaque maison à une position différente le long de l'axe des x
-            // house.position.x = i * 2;
-            // console.log(house)
-            scene.add(house);
+        // Placez chaque maison à une position différente le long de l'axe des x
+        // house.position.x = i * 2;
+        // console.log(house)
+        scene.add(house);
         // }
     });
 
     // Positionnez la caméra de sorte qu'elle regarde les maisons
-    camera.position.z = 250;
-    camera.position.y = 1;
+    camera.position.z = 200;
+    camera.position.y = 0;
     camera.position.x = 0;
 
     // Fonction de rendu
@@ -128,7 +127,7 @@
     async function connectMetamask() {
         try {
             // Demandez à Metamask l'autorisation de se connecter
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
             console.log('Connected with account:', accounts[0]);
         } catch (error) {
             console.error('User rejected connection:', error);
@@ -146,10 +145,10 @@
 
     async function getMaisonPrice(id) {
         // Connectez-vous à Metamask
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
 
         // Récupérez toutes les maisons
-        const maisons = await maisonContract.methods.getAllMaisons().call({ from: accounts[0] });
+        const maisons = await maisonContract.methods.getAllMaisons().call({from: accounts[0]});
 
         // Trouvez la maison avec l'ID correspondant et renvoyez son prix
         for (let maison of maisons) {
@@ -165,7 +164,7 @@
     async function mintMaison(tokenId) {
         const accounts = await web3.eth.getAccounts();
         const instance = await maisonContract.deployed();
-        await instance.mint(accounts[0], tokenId, { value: web3.utils.toWei('1', 'ether'), from: accounts[0] });
+        await instance.mint(accounts[0], tokenId, {value: web3.utils.toWei('1', 'ether'), from: accounts[0]});
     }
 
     async function getMaisonOwner(tokenId) {
@@ -187,8 +186,8 @@
     }
 
     // Mettre à jour le metaverse lorsque de nouvelles maisons sont minted
-    maisonContract.deployed().then(function(instance) {
-        instance.Transfer({}, function(error, event) {
+    maisonContract.deployed().then(function (instance) {
+        instance.Transfer({}, function (error, event) {
             if (error) console.error('Error on Transfer event:', error);
             else {
                 // Mettre à jour le Metaverse
@@ -205,4 +204,59 @@
     body {
         margin: 0;
     }
+
+    p {
+        margin: 0;
+        padding: 0;
+    }
+
+    #modal {
+        position: absolute;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+        top: 5px;
+        left: 5px;
+        flex-direction: column;
+    }
+
+    #modal .title {
+        font-size: 1rem; /* 16px */
+        line-height: 1.5rem; /* 24px */
+        font-weight: 600;
+        color: rgb(17 24 39);
+    }
+
+    #modal .text {
+        font-size: 0.875rem; /* 14px */
+        line-height: 1.25rem; /* 20px */
+        color: rgb(107 114 128);
+    }
+    #modal .text span {
+        font-size: 0.875rem; /* 14px */
+        line-height: 1.25rem; /* 20px */
+        font-weight: 400;
+        color: rgb(107 114 128);
+    }
+
+    #modal button {
+        margin-top: 10px;
+        padding: 0.25rem 0.5rem;
+        background-color: #4F46E5;
+        color: #ffffff;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        font-weight: 600;
+        border-radius: 0.25rem;
+        border: none;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    #modal button:hover {
+        background-color: #6366F1;
+    }
+
 </style>
