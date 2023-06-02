@@ -1,24 +1,35 @@
-const Plot = ({ position, size, terrainId, terrain, setTerrainName, setTerrainOwner, setHasOwner, setTerrainId }) => {
-    const clickHandler = () => {
-        setTerrainName(terrain.name)
-        setTerrainId(terrainId)
+const PlotComponent = ({
+                           position,
+                           size,
+                           plotId,
+                           plot,
+                           setPlotName,
+                           setPlotOwner,
+                           setOwnershipStatus,
+                           setPlotId
+                       }) => {
+    // Click handler function to update the state for the plot
+    const handleOnClick = () => {
+        setPlotName(plot.name)
+        setPlotId(plotId)
 
-        if (terrain.owner === '0x0000000000000000000000000000000000000000') {
-            setTerrainOwner('Libre')
-            setHasOwner(false)
+        // Checking if the plot is owned
+        if (plot.owner === '0x0000000000000000000000000000000000000000') {
+            setPlotOwner('Free');
+            setOwnershipStatus(false);
         } else {
-            console.log(terrain);
-            setTerrainOwner(terrain.owner)
-            setHasOwner(true)
+            setPlotOwner(plot.owner);
+            setOwnershipStatus(true);
         }
     }
 
+    // Render a plot in the 3D scene
     return (
-        <mesh position={position} onClick={clickHandler}>
+        <mesh position={position} onClick={handleOnClick}>
             <planeBufferGeometry attach="geometry" args={size} />
             <meshStandardMaterial color={"#397939"} metalness={0.5} roughness={0} />
         </mesh>
     );
 }
 
-export default Plot;
+export default PlotComponent;

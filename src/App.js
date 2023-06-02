@@ -98,12 +98,12 @@ function App() {
 										key={index}
 										position={[house.posX, house.posY, 0.1]}
 										size={[house.sizeX, house.sizeY]}
-										terrainId={index + 1}
-										terrain={house}
-										setTerrainName={setTerrainName}
-										setTerrainOwner={setTerrainOwner}
-										setHasOwner={setHasOwner}
-										setTerrainId={setTerrainId}
+										plotId={index + 1}
+										plot={house}
+										setPlotName={setTerrainName}
+										setPlotOwner={setTerrainOwner}
+										setOwnershipStatus={setHasOwner}
+										setPlotId={setTerrainId}
 									/>
 								)
 							} else {
@@ -112,12 +112,12 @@ function App() {
 										key={index}
 										position={[house.posX, house.posY, 0.1]}
 										size={[house.sizeX, house.sizeY, house.sizeZ]}
-										terrainId={index + 1}
-										terrain={house}
-										setTerrainName={setTerrainName}
-										setTerrainOwner={setTerrainOwner}
-										setHasOwner={setHasOwner}
-										setTerrainId={setTerrainId}
+										houseId={index + 1}
+										house={house}
+										setHouseName={setTerrainName}
+										setHouseOwner={setTerrainOwner}
+										setOwnershipStatus={setHasOwner}
+										setHouseId={setTerrainId}
 									/>
 								)
 							}

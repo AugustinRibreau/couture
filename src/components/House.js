@@ -1,36 +1,47 @@
-import * as THREE from 'three';
-import React, { useRef } from "react";
-import { useGLTF } from "@react-three/drei";
+import React from "react";
+import {useGLTF} from "@react-three/drei";
 
 // Import Assets
-// import ClearWood from '../assets/clearWood.png';
-// import DarkWood from '../assets/darkWood.jpg';
-import _House from '../assets/house.gltf';
+import _HouseModel from '../assets/house.gltf';
 
-const House = ({ position, size, terrainId, terrain, setTerrainName, setTerrainOwner, setHasOwner, setTerrainId }) => {
-    // const [surface, color] = useLoader(TextureLoader, [DarkWood, ClearWood])
-    const { nodes, materials } = useGLTF(_House);
-    const clickHandler = () => {
-        setTerrainName(terrain.name)
-        setTerrainId(terrainId)
+// This component is used to represent a house on a terrain in a 3D scene
+const HouseComponent = ({
+                            position,
+                            size,
+                            houseId,
+                            house,
+                            setHouseName,
+                            setHouseOwner,
+                            setOwnershipStatus,
+                            setHouseId
+                        }) => {
+    const {nodes, materials} = useGLTF(_HouseModel);
 
-        if (terrain.owner === '0x0000000000000000000000000000000000000000') {
-            setTerrainOwner('Libre')
-            setHasOwner(false)
+    // Click handler function to update the state for the plot
+    const handleOnClick = () => {
+        setHouseName(house.name)
+        setHouseId(houseId)
+
+        // Checking if the plot is owned
+        if (house.owner === '0x0000000000000000000000000000000000000000') {
+            setHouseOwner('Free');
+            setOwnershipStatus(false);
         } else {
-            setTerrainOwner(terrainId.owner)
-            setHasOwner(true)
+            setHouseOwner(houseId.owner);
+            setOwnershipStatus(true);
         }
     }
 
+    // Adjust the house position and rotation in the scene
     nodes.House_13.up.y = 0;
     nodes.House_13.parent.rotation.x = 50;
 
+    // Render the house model in the 3D scene
     return (
         <mesh
             castShadow
             receiveShadow
-            onClick={clickHandler}
+            onClick={handleOnClick}
             geometry={nodes.House_13.geometry}
             material={materials["House 1"]}
             rotation={[Math.PI / 2, 0, 0]}
@@ -41,4 +52,4 @@ const House = ({ position, size, terrainId, terrain, setTerrainName, setTerrainO
     );
 }
 
-export default House;
+export default HouseComponent;

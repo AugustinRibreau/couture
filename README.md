@@ -65,12 +65,14 @@
     (1) ...
     (2) ...
    ```
-6. Lancer dans un second terminal
+
+6. Ensuite, importer ce compte dans MetaMask
+7. Lancer dans un second terminal
    ```sh
      truffle migrate --reset && npm start
    ```
 
-   Si tout ce passe bien, un onglet vient de s'ouvrir sur l'url `http://localhost:3000`.
+   Si tout se passe bien, un onglet vient de s'ouvrir sur l'url `http://localhost:3000`.
    <br><br>
 7. Acheter votre première maison 🏠 !
 
