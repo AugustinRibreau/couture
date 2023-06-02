@@ -1,9 +1,5 @@
 <a id="readme-top"></a>
-<style>
-*{
-    scroll-behavior: smooth;
-}
-</style>  
+
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
